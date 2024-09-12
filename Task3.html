@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Tic Tac Toe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        /* Background gradient and text styles */
+        body {
+            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            color: #ffffff;
+            font-family: 'Verdana', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ffed66;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+            letter-spacing: 1.5px;
+        }
+
+        table {
+            width: 100%;
+            margin: 0 auto;
+            border-collapse: separate;
+            border-spacing: 10px;
+        }
+
+        td {
+            width: 120px;
+            height: 120px;
+            background: #ffffff;
+            border-radius: 15px;
+            font-size: 3em;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        td:hover {
+            background: #ffed66;
+            transform: scale(1.1);
+        }
+
+        td.X {
+            background: linear-gradient(135deg, #f67280, #c06c84);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        td.O {
+            background: linear-gradient(135deg, #355c7d, #6c5b7b);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            color: #ffed66;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+
+        #reset-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #ffed66;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #reset-btn:hover {
+            background-color: #ffd400;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Tic Tac Toe</h1>
+        <table class="table table-bordered">
+            <tr>
+                <td id="cell-1"></td>
+                <td id="cell-2"></td>
+                <td id="cell-3"></td>
+            </tr>
+            <tr>
+                <td id="cell-4"></td>
+                <td id="cell-5"></td>
+                <td id="cell-6"></td>
+            </tr>
+            <tr>
+                <td id="cell-7"></td>
+                <td id="cell-8"></td>
+                <td id="cell-9"></td>
+            </tr>
+        </table>
+        <h2 id="message">Current Player: <span id="current-player">X</span></h2>
+        <button id="reset-btn">Restart Game</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+    <script>
+        const cells = document.querySelectorAll('td');
+        let currentPlayer = "X";
+        let gameBoard = ["", "", "", "", "", "", "", "", ""]; // Initial empty board
+
+        // Handle cell clicks
+        function handleCellClick(cell) {
+            const cellIndex = cell.target.id.split('-')[1] - 1;
+            if (gameBoard[cellIndex] !== "") {
+                return; // If cell is already filled
+            }
+            gameBoard[cellIndex] = currentPlayer;
+            cell.target.textContent = currentPlayer;
+            cell.target.classList.add(currentPlayer);
+
+            checkForWinner();
+            currentPlayer = currentPlayer === "X" ? "O" : "X"; // Switch turns
+            document.getElementById("current-player").textContent = currentPlayer;
+        }
+
+        // Check for winner or tie
+        function checkForWinner() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            for (let pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+                    setTimeout(() => alert(`Player ${gameBoard[a]} Wins!`), 100);
+                    return;
+                }
+            }
+
+            if (!gameBoard.includes("")) {
+                setTimeout(() => alert("It's a Draw!"), 100);
+            }
+        }
+
+        // Reset game
+        function resetGame() {
+            gameBoard = ["", "", "", "", "", "", "", "", ""];
+            cells.forEach(cell => {
+                cell.textContent = "";
+                cell.classList.remove("X", "O");
+            });
+            currentPlayer = "X";
+            document.getElementById("current-player").textContent = currentPlayer;
+        }
+
+        // Attach event listeners to cells
+        cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+        document.getElementById("reset-btn").addEventListener('click', resetGame);
+    </script>
+</body>
+
+</html>
